@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>i-CONtainer | Smart Food Container</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+        }
+        
+        .traffic-light {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        .glow-green {
+            box-shadow: 0 0 25px rgba(74, 222, 128, 0.7);
+        }
+        
+        .glow-yellow {
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.7);
+        }
+        
+        .glow-red {
+            box-shadow: 0 0 25px rgba(248, 113, 113, 0.7);
+        }
+        
+        .status-badge {
+            transition: all 0.3s ease;
+        }
+        
+        .sensor-graph {
+            background: rgba(30, 41, 59, 0.7);
+        }
+        
+        .product-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Main Container -->
+    <div class="flex flex-col lg:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-full lg:w-64 bg-gray-800 p-4 lg:p-6 flex flex-col">
+            <!-- Logo -->
+            <div class="mb-8 flex items-center justify-center">
+                <div class="bg-primary-600 p-2 rounded-lg mr-3">
+                    <i class="fas fa-box text-white text-xl"></i>
+                </div>
+                <h1 class="text-white text-xl font-bold">i-CON<span class="text-primary-500">tainer</span></h1>
+            </div>
+            
+            <!-- User Account -->
+            <div class="bg-gray-700 rounded-xl p-4 mb-6">
+                <div class="flex items-center mb-3">
+                    <div class="bg-gray-600 border-2 border-dashed rounded-xl w-12 h-12 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h2 class="font-bold text-white" id="username">Alex Morgan</h2>
+                        <p class="text-xs text-gray-400">Premium Account</p>
+                    </div>
+                </div>
+                <button id="editUsernameBtn" class="w-full py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm transition">
+                    <i class="fas fa-edit mr-1"></i> Edit Profile
+                </button>
+            </div>
+            
+            <!-- Product List -->
+            <div class="flex-1 overflow-y-auto">
+                <h3 class="text-gray-400 text-sm font-semibold mb-3">MY PRODUCTS</h3>
+                <div id="productsContainer">
+                    <button data-product="container" class="w-full mb-2 py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-left font-bold transition product-btn">
+                        <i class="fas fa-box mr-2"></i> i-CONtainer
+                    </button>
+                    <button data-product="shelf" class="w-full mb-2 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-xl text-left font-bold transition product-btn">
+                        <i class="fas fa-shopping-cart mr-2"></i> Smart Shelf
+                    </button>
+                    <button data-product="fridge" class="w-full mb-2 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-xl text-left font-bold transition product-btn">
+                        <i class="fas fa-refrigerator mr-2"></i> Smart Fridge
+                    </button>
+                    <button data-product="auto" class="w-full mb-2 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-xl text-left font-bold transition product-btn">
+                        <i class="fas fa-robot mr-2"></i> Auto Restock
+                    </button>
+                    <button data-product="market" class="w-full mb-2 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-xl text-left font-bold transition product-btn">
+                        <i class="fas fa-store mr-2"></i> i-Market
+                    </button>
+                </div>
+                
+                <button id="addProductBtn" class="w-full py-3 px-4 bg-gray-700 hover:bg-primary-700 border-2 border-dashed border-primary-500 rounded-xl text-center text-primary-400 mt-4 transition">
+                    <i class="fas fa-plus mr-2"></i> Add New Product
+                </button>
+            </div>
+            
+            <!-- Footer -->
+            <div class="mt-auto pt-4 border-t border-gray-700">
+                <div class="flex justify-center space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-github"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white transition"><i class="fas fa-question-circle"></i></a>
+                </div>
+                <p class="text-center text-gray-500 text-xs mt-2">i-CONtainer v2.0 © 2023</p>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 p-4 md:p-6 lg:p-8">
+            <!-- Top Bar -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-6 border-b border-gray-700">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-white">i-CONtainer Dashboard</h1>
+                    <p class="text-gray-400 mt-1">Monitor your food freshness in real-time</p>
+                </div>
+                
+                <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                    <!-- Subscription Dropdown -->
+                    <div class="relative group">
+                        <button class="px-4 py-2 bg-primary-800 hover:bg-primary-700 text-white rounded-lg flex items-center transition">
+                            <i class="fas fa-credit-card mr-2"></i>
+                            <span id="currentPlan">$200/year</span>
+                            <i class="fas fa-chevron-down ml-2 text-sm"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-lg py-1 hidden group-hover:block z-10">
+                            <a href="#" data-plan="monthly" class="block px-4 py-2 text-white hover:bg-primary-700 transition plan-option">$1 / month</a>
+                            <a href="#" data-plan="yearly" class="block px-4 py-2 text-white hover:bg-primary-700 transition plan-option active">$200 / year</a>
+                            <a href="#" data-plan="3years" class="block px-4 py-2 text-white hover:bg-primary-700 transition plan-option">$500 / 3 years</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <button class="p-2 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition">
+                        <i class="fas fa-bell"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- i-CONtainer Dashboard -->
+            <div id="containerDashboard">
+                <!-- Food Status Section with Sensor Inputs -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Combined Status and Sensor Controls -->
+                    <div class="bg-gray-800 rounded-2xl p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Food Freshness Status</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Traffic Light -->
+                            <div class="flex justify-center md:justify-start">
+                                <div class="traffic-light bg-gray-900 rounded-2xl p-6">
+                                    <div id="redLight" class="w-20 h-20 bg-gray-700 rounded-full mb-3 flex items-center justify-center transition">
+                                        <i class="fas fa-times text-2xl text-gray-600"></i>
+                                    </div>
+                                    <div id="yellowLight" class="w-20 h-20 bg-gray-700 rounded-full mb-3 flex items-center justify-center transition">
+                                        <i class="fas fa-exclamation text-2xl text-gray-600"></i>
+                                    </div>
+                                    <div id="greenLight" class="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center transition">
+                                        <i class="fas fa-check text-2xl text-gray-600"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Display -->
+                            <div>
+                                <div id="statusDisplay" class="p-4 bg-gray-900 rounded-xl h-full flex flex-col justify-center">
+                                    <h3 class="text-2xl font-bold" id="statusText">Status Unknown</h3>
+                                    <p class="text-gray-400 mt-2" id="statusMessage">Scanning food freshness...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sensor Form (now moved here) -->
+                        <form id="sensorForm" class="mt-6 grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="co2Input" class="block text-sm text-gray-300 mb-2">CO₂ Level (ppm)</label>
+                                <input type="range" min="0" max="3000" value="500" class="w-full" id="co2Input">
+                                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                    <span>0</span>
+                                    <span id="co2ValueInput">500</span>
+                                    <span>3000</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="nh3Input" class="block text-sm text-gray-300 mb-2">NH₃ Level (ppm)</label>
+                                <input type="range" min="0" max="50" value="8" class="w-full" id="nh3Input">
+                                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                    <span>0</span>
+                                    <span id="nh3ValueInput">8</span>
+                                    <span>50</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="h2sInput" class="block text-sm text-gray-300 mb-2">H₂S Level (ppm)</label>
+                                <input type="range" min="0" max="30" value="4" class="w-full" id="h2sInput">
+                                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                    <span>0</span>
+                                    <span id="h2sValueInput">4</span>
+                                    <span>30</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="vocsInput" class="block text-sm text-gray-300 mb-2">VOCs Level (ppb)</label>
+                                <input type="range" min="0" max="2000" value="300" class="w-full" id="vocsInput">
+                                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                    <span>0</span>
+                                    <span id="vocsValueInput">300</span>
+                                    <span>2000</span>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <!-- Food type and test button -->
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label for="foodType" class="block text-sm text-gray-300 mb-2">Food Type</label>
+                                <select id="foodType" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    <option>Chicken</option>
+                                    <option>Beef</option>
+                                    <option>Fish</option>
+                                    <option>Dairy</option>
+                                    <option>Vegetables</option>
+                                    <option>Fruit</option>
+                                    <option>Cooked Meal</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-300 mb-2">Perform Test</label>
+                                <button id="runTestBtn" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                    <i class="fas fa-flask mr-2"></i> Test Freshness
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sensor Data Display -->
+                    <div class="bg-gray-800 rounded-2xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-white">Sensor Data</h2>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 bg-green-900 text-green-300 rounded text-xs">Live</span>
+                                <span class="px-2 py-1 bg-primary-900 text-primary-300 rounded text-xs">Connected</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                            <div class="sensor-data bg-gray-900 rounded-xl p-4">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-bold text-gray-300">CO₂</h3>
+                                    <span id="co2Status" class="px-2 py-1 bg-gray-700 rounded text-xs status-badge">N/A</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline">
+                                    <span id="co2Value" class="text-2xl font-bold">--</span>
+                                    <span class="ml-1 text-gray-400 text-sm">ppm</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Carbon Dioxide</p>
+                            </div>
+                            
+                            <div class="sensor-data bg-gray-900 rounded-xl p-4">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-bold text-gray-300">NH₃</h3>
+                                    <span id="nh3Status" class="px-2 py-1 bg-gray-700 rounded text-xs status-badge">N/A</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline">
+                                    <span id="nh3Value" class="text-2xl font-bold">--</span>
+                                    <span class="ml-1 text-gray-400 text-sm">ppm</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Ammonia</p>
+                            </div>
+                            
+                            <div class="sensor-data bg-gray-900 rounded-xl p-4">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-bold text-gray-300">H₂S</h3>
+                                    <span id="h2sStatus" class="px-2 py-1 bg-gray-700 rounded text-xs status-badge">N/A</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline">
+                                    <span id="h2sValue" class="text-2xl font-bold">--</span>
+                                    <span class="ml-1 text-gray-400 text-sm">ppm</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Hydrogen Sulfide</p>
+                            </div>
+                            
+                            <div class="sensor-data bg-gray-900 rounded-xl p-4">
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-bold text-gray-300">VOCs</h3>
+                                    <span id="vocsStatus" class="px-2 py-1 bg-gray-700 rounded text-xs status-badge">N/A</span>
+                                </div>
+                                <div class="mt-3 flex items-baseline">
+                                    <span id="vocsValue" class="text-2xl font-bold">--</span>
+                                    <span class="ml-1 text-gray-400 text-sm">ppb</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Volatile Organic</p>
+                            </div>
+                        </div>
+                        
+                        <div class="sensor-graph rounded-xl p-4">
+                            <div class="flex justify-between mb-4">
+                                <h3 class="font-bold text-gray-300">Gas Levels History</h3>
+                                <div class="flex text-xs">
+                                    <button class="px-3 py-1 bg-gray-700 mr-2 rounded">24H</button>
+                                    <button class="px-3 py-1 bg-primary-600 rounded">7D</button>
+                                </div>
+                            </div>
+                            <div class="h-40 relative">
+                                <canvas id="sensorChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Details -->
+                <div class="bg-gray-800 rounded-2xl p-6 mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-white">Device Details</h2>
+                        <span class="px-3 py-1 bg-primary-900 text-primary-300 rounded-full text-sm">Online</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-900 rounded-xl p-4">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-primary-900 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-microchip text-primary-400"></i>
+                                </div>
+                                <h3 class="font-semibold">Device Info</h3>
+                            </div>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li class="flex justify-between">
+                                    <span>Model:</span>
+                                    <span class="font-mono">iCT-2000 Pro</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Serial:</span>
+                                    <span class="font-mono">X5-28A-9B3-RT4</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Firmware:</span>
+                                    <span class="font-mono">v2.1.8</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Battery:</span>
+                                    <span class="text-green-400">78%</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-gray-900 rounded-xl p-4">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-primary-900 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-thermometer-half text-primary-400"></i>
+                                </div>
+                                <h3 class="font-semibold">Environment</h3>
+                            </div>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li class="flex justify-between">
+                                    <span>Temperature:</span>
+                                    <span class="font-mono">4.2°C</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Humidity:</span>
+                                    <span class="font-mono">42%</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Last Updated:</span>
+                                    <span class="font-mono">12s ago</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Food Type:</span>
+                                    <span class="font-mono">Chicken</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-gray-900 rounded-xl p-4">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-primary-900 w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-history text-primary-400"></i>
+                                </div>
+                                <h3 class="font-semibold">History & Alerts</h3>
+                            </div>
+                            <ul class="text-sm text-gray-300 space-y-2">
+                                <li class="flex justify-between">
+                                    <span>Storage Time:</span>
+                                    <span class="font-mono">3d 4h</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Estimated Fresh:</span>
+                                    <span class="font-mono">1d 12h</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Last Alert:</span>
+                                    <span class="text-yellow-400">None</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span>Next Scan:</span>
+                                    <span class="text-primary-400">In 15m</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-4 border-t border-gray-700">
+                        <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm transition">
+                            <i class="fas fa-cog mr-1"></i> Device Settings
+                        </button>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Coming Soon Placeholder -->
+            <div id="comingSoon" class="hidden bg-gray-800 rounded-2xl p-16 text-center">
+                <div class="mx-auto max-w-md">
+                    <div class="bg-gray-900 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-tools text-3xl text-primary-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Feature in Development</h2>
+                    <p class="text-gray-400 mb-6">This feature is currently being developed and will be available in our next update.</p>
+                    <div class="inline-flex items-center px-4 py-2 bg-gray-700 rounded-full text-sm text-primary-400">
+                        <span class="flex w-2 h-2 mr-2">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+                            </span>
+                        </span>
+                        Coming Soon
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Adding Product -->
+    <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white">Add New Product</h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">Product Type</label>
+                    <select id="newProductType" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <option>Smart Shelf</option>
+                        <option>Smart Refrigerator</option>
+                        <option>Auto Restock Device</option>
+                        <option>Smart Pantry</option>
+                        <option>Portable Container</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">Device Name</label>
+                    <input type="text" id="deviceName" placeholder="e.g. Kitchen Fridge" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">Device Location</label>
+                    <input type="text" id="deviceLocation" placeholder="e.g. Main Kitchen" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end space-x-3">
+                <button id="cancelAddBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">Cancel</button>
+                <button id="confirmAddBtn" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition">Add Product</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        // DOM elements
+        const usernameEl = document.getElementById('username');
+        const editUsernameBtn = document.getElementById('editUsernameBtn');
+        const productButtons = document.querySelectorAll('.product-btn');
+        const addProductBtn = document.getElementById('addProductBtn');
+        const runTestBtn = document.getElementById('runTestBtn');
+        const planOptions = document.querySelectorAll('.plan-option');
+        const currentPlanEl = document.getElementById('currentPlan');
+        const statusText = document.getElementById('statusText');
+        const statusMessage = document.getElementById('statusMessage');
+        const co2Value = document.getElementById('co2Value');
+        const nh3Value = document.getElementById('nh3Value');
+        const h2sValue = document.getElementById('h2sValue');
+        const vocsValue = document.getElementById('vocsValue');
+        const co2Status = document.getElementById('co2Status');
+        const nh3Status = document.getElementById('nh3Status');
+        const h2sStatus = document.getElementById('h2sStatus');
+        const vocsStatus = document.getElementById('vocsStatus');
+        const redLight = document.getElementById('redLight');
+        const yellowLight = document.getElementById('yellowLight');
+        const greenLight = document.getElementById('greenLight');
+        
+        // Modal elements
+        const addProductModal = document.getElementById('addProductModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelAddBtn = document.getElementById('cancelAddBtn');
+        const confirmAddBtn = document.getElementById('confirmAddBtn');
+        const deviceNameInput = document.getElementById('deviceName');
+        
+        // Slider elements
+        const co2Input = document.getElementById('co2Input');
+        const nh3Input = document.getElementById('nh3Input');
+        const h2sInput = document.getElementById('h2sInput');
+        const vocsInput = document.getElementById('vocsInput');
+        const co2ValueInput = document.getElementById('co2ValueInput');
+        const nh3ValueInput = document.getElementById('nh3ValueInput');
+        const h2sValueInput = document.getElementById('h2sValueInput');
+        const vocsValueInput = document.getElementById('vocsValueInput');
+        
+        // Product container
+        const productsContainer = document.getElementById('productsContainer');
+        const containerDashboard = document.getElementById('containerDashboard');
+        const comingSoon = document.getElementById('comingSoon');
+        
+        // Initial state
+        let currentState = 'loading';
+        
+        // Edit username
+        editUsernameBtn.addEventListener('click', () => {
+            const newName = prompt('Enter your new username:', usernameEl.textContent);
+            if (newName && newName.trim() !== '') {
+                usernameEl.textContent = newName.trim();
+            }
+        });
+        
+        // Handle product selection
+        productButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const product = button.getAttribute('data-product');
+                
+                // Clear active state
+                productButtons.forEach(btn => {
+                    btn.classList.remove('bg-primary-600', 'text-white');
+                    btn.classList.add('bg-gray-700', 'text-gray-300');
+                });
+                
+                // Set active state
+                button.classList.remove('bg-gray-700', 'text-gray-300');
+                button.classList.add('bg-primary-600', 'text-white');
+                
+                // Show correct content
+                if (product === 'container') {
+                    containerDashboard.classList.remove('hidden');
+                    comingSoon.classList.add('hidden');
+                } else {
+                    containerDashboard.classList.add('hidden');
+                    comingSoon.classList.remove('hidden');
+                }
+            });
+        });
+        
+        // Show add product modal
+        addProductBtn.addEventListener('click', () => {
+            addProductModal.classList.remove('hidden');
+        });
+        
+        // Hide modal
+        const hideModal = () => addProductModal.classList.add('hidden');
+        closeModalBtn.addEventListener('click', hideModal);
+        cancelAddBtn.addEventListener('click', hideModal);
+        
+        // Add new product
+        confirmAddBtn.addEventListener('click', () => {
+            const deviceName = deviceNameInput.value.trim();
+            const productType = document.getElementById('newProductType').value;
+            
+            if (!deviceName) {
+                alert('Please enter a device name');
+                return;
+            }
+            
+            // Create new product element
+            const newProduct = document.createElement('button');
+            newProduct.className = 'w-full mb-2 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-xl text-left font-bold transition product-btn';
+            newProduct.setAttribute('data-product', 'new');
+            newProduct.innerHTML = `<i class="fas fa-box mr-2"></i> ${deviceName}`;
+            
+            // Add click event
+            newProduct.addEventListener('click', function() {
+                productButtons.forEach(btn => {
+                    btn.classList.remove('bg-primary-600', 'text-white');
+                    btn.classList.add('bg-gray-700', 'text-gray-300');
+                });
+                this.classList.remove('bg-gray-700', 'text-gray-300');
+                this.classList.add('bg-primary-600', 'text-white');
+                
+                containerDashboard.classList.add('hidden');
+                comingSoon.classList.remove('hidden');
+            });
+            
+            // Add to container
+            productsContainer.insertBefore(newProduct, addProductBtn);
+            
+            // Reset form and hide modal
+            deviceNameInput.value = '';
+            hideModal();
+        });
+        
+        // Handle subscription plan change
+        planOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update visual active state
+                planOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                // Update current plan display
+                const plan = option.getAttribute('data-plan');
+                if (plan === 'monthly') currentPlanEl.textContent = '$1/month';
+                else if (plan === 'yearly') currentPlanEl.textContent = '$200/year';
+                else if (plan === '3years') currentPlanEl.textContent = '$500/3 years';
+            });
+        });
+        
+        // Handle slider input
+        function updateSensorValue(inputElement, valueElement) {
+            return function() {
+                valueElement.textContent = this.value;
+            };
+        }
+        
+        co2Input.addEventListener('input', updateSensorValue(co2Input, co2ValueInput));
+        nh3Input.addEventListener('input', updateSensorValue(nh3Input, nh3ValueInput));
+        h2sInput.addEventListener('input', updateSensorValue(h2sInput, h2sValueInput));
+        vocsInput.addEventListener('input', updateSensorValue(vocsInput, vocsValueInput));
+        
+        // Determine food status based on sensor values
+        function determineFoodStatus(co2, nh3, h2s, vocs) {
+            // Simulate thresholds for chicken food type
+            const thresholds = {
+                co2: { normal: 1000, warning: 2000 },
+                nh3: { normal: 10, warning: 20 },
+                h2s: { normal: 5, warning: 10 },
+                vocs: { normal: 500, warning: 1000 }
+            };
+            
+            const status = {
+                co2: co2 <= thresholds.co2.normal ? 'normal' : 
+                     co2 <= thresholds.co2.warning ? 'warning' : 'critical',
+                nh3: nh3 <= thresholds.nh3.normal ? 'normal' : 
+                     nh3 <= thresholds.nh3.warning ? 'warning' : 'critical',
+                h2s: h2s <= thresholds.h2s.normal ? 'normal' : 
+                     h2s <= thresholds.h2s.warning ? 'warning' : 'critical',
+                vocs: vocs <= thresholds.vocs.normal ? 'normal' : 
+                      vocs <= thresholds.vocs.warning ? 'warning' : 'critical'
+            };
+            
+            // Determine overall status
+            if (status.co2 === 'critical' || status.nh3 === 'critical' || 
+                status.h2s === 'critical' || status.vocs === 'critical') {
+                return 'spoiled';
+            } else if (status.co2 === 'warning' || status.nh3 === 'warning' || 
+                       status.h2s === 'warning' || status.vocs === 'warning') {
+                return 'warning';
+            } else {
+                return 'fresh';
+            }
+        }
+        
+        // Update UI based on food status
+        function updateUIStatus(status) {
+            // Reset all lights
+            redLight.className = 'w-24 h-24 bg-gray-700 rounded-full mb-4 flex items-center justify-center transition';
+            yellowLight.className = 'w-24 h-24 bg-gray-700 rounded-full mb-4 flex items-center justify-center transition';
+            greenLight.className = 'w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center transition';
+            
+            // Update status text
+            if (status === 'fresh') {
+                statusText.textContent = 'FRESH';
+                statusText.className = 'text-2xl font-bold text-green-500';
+                statusMessage.textContent = 'Your food is safe to eat';
+                statusMessage.className = 'text-gray-300 mt-2';
+                
+                greenLight.classList.add('glow-green', 'bg-green-500');
+                greenLight.innerHTML = '<i class="fas fa-check text-white text-3xl"></i>';
+                
+            } else if (status === 'warning') {
+                statusText.textContent = 'WARNING';
+                statusText.className = 'text-2xl font-bold text-yellow-500';
+                statusMessage.textContent = 'Food is starting to spoil, consume soon';
+                statusMessage.className = 'text-gray-300 mt-2';
+                
+                yellowLight.classList.add('glow-yellow', 'bg-yellow-500');
+                yellowLight.innerHTML = '<i class="fas fa-exclamation text-white text-3xl"></i>';
+                
+            } else if (status === 'spoiled') {
+                statusText.textContent = 'SPOILED';
+                statusText.className = 'text-2xl font-bold text-red-500';
+                statusMessage.textContent = 'Do not consume, food may be dangerous';
+                statusMessage.className = 'text-gray-300 mt-2';
+                
+                redLight.classList.add('glow-red', 'bg-red-500');
+                redLight.innerHTML = '<i class="fas fa-times text-white text-3xl"></i>';
+            }
+            
+            // Update sensor UI colors
+            function updateSensorDisplay(element, value, thresholds) {
+                let statusClass, text;
+                
+                if (value <= thresholds.normal) {
+                    statusClass = 'bg-green-900 text-green-300';
+                    text = 'Normal';
+                } else if (value <= thresholds.warning) {
+                    statusClass = 'bg-yellow-900 text-yellow-300';
+                    text = 'Warning';
+                } else {
+                    statusClass = 'bg-red-900 text-red-300';
+                    text = 'Above Limit';
+                }
+                
+                element.className = `px-2 py-1 ${statusClass} rounded text-xs status-badge`;
+                element.textContent = text;
+            }
+            
+            // Thresholds (same as before)
+            const thresholds = {
+                co2: { normal: 1000, warning: 2000 },
+                nh3: { normal: 10, warning: 20 },
+                h2s: { normal: 5, warning: 10 },
+                vocs: { normal: 500, warning: 1000 }
+            };
+            
+            updateSensorDisplay(co2Status, parseInt(co2ValueInput.textContent), thresholds.co2);
+            updateSensorDisplay(nh3Status, parseInt(nh3ValueInput.textContent), thresholds.nh3);
+            updateSensorDisplay(h2sStatus, parseInt(h2sValueInput.textContent), thresholds.h2s);
+            updateSensorDisplay(vocsStatus, parseInt(vocsValueInput.textContent), thresholds.vocs);
+        }
+        
+        // Run freshness test
+        runTestBtn.addEventListener('click', () => {
+            // Get values
+            const co2Val = parseInt(co2ValueInput.textContent);
+            const nh3Val = parseInt(nh3ValueInput.textContent);
+            const h2sVal = parseInt(h2sValueInput.textContent);
+            const vocsVal = parseInt(vocsValueInput.textContent);
+            
+            // Update displayed sensor values
+            co2Value.textContent = co2Val;
+            nh3Value.textContent = nh3Val;
+            h2sValue.textContent = h2sVal;
+            vocsValue.textContent = vocsVal;
+            
+            // Determine food status
+            const foodStatus = determineFoodStatus(co2Val, nh3Val, h2sVal, vocsVal);
+            currentState = foodStatus;
+            
+            // Update UI based on status
+            updateUIStatus(foodStatus);
+        });
+        
+        // Initialize with a loading state
+        function initApp() {
+            // Simulate scanning...
+            statusText.textContent = 'SCANNING...';
+            statusText.className = 'text-2xl font-bold text-primary-500';
+            statusMessage.textContent = 'Analyzing food freshness...';
+            
+            // Simulate sensor loading
+            const elements = [co2Value, nh3Value, h2sValue, vocsValue];
+            elements.forEach(el => {
+                el.textContent = '--';
+                el.classList.add('pulse');
+            });
+            
+            // Add pulsing effect to status badges
+            co2Status.innerHTML = '<span class="inline-flex h-2 w-2 rounded-full bg-gray-500"></span>';
+            nh3Status.innerHTML = '<span class="inline-flex h-2 w-2 rounded-full bg-gray-500"></span>';
+            h2sStatus.innerHTML = '<span class="inline-flex h-2 w-2 rounded-full bg-gray-500"></span>';
+            vocsStatus.innerHTML = '<span class="inline-flex h-2 w-2 rounded-full bg-gray-500"></span>';
+            
+            // After a delay, show initial status
+            setTimeout(() => {
+                const co2 = 500;
+                const nh3 = 8;
+                const h2s = 4;
+                const vocs = 300;
+                
+                co2Value.textContent = co2;
+                nh3Value.textContent = nh3;
+                h2sValue.textContent = h2s;
+                vocsValue.textContent = vocs;
+                
+                co2ValueInput.textContent = co2;
+                nh3ValueInput.textContent = nh3;
+                h2sValueInput.textContent = h2s;
+                vocsValueInput.textContent = vocs;
+                
+                co2Input.value = co2;
+                nh3Input.value = nh3;
+                h2sInput.value = h2s;
+                vocsInput.value = vocs;
+                
+                elements.forEach(el => el.classList.remove('pulse'));
+                
+                const foodStatus = determineFoodStatus(co2, nh3, h2s, vocs);
+                updateUIStatus(foodStatus);
+            }, 2500);
+        }
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
