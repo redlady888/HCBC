@@ -181,105 +181,34 @@
             
             <!-- i-CONtainer Dashboard -->
             <div id="containerDashboard">
-                <!-- Food Status Section with Sensor Inputs -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <!-- Combined Status and Sensor Controls -->
-                    <div class="bg-gray-800 rounded-2xl p-6">
+                <!-- Food Status Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Traffic Light Status -->
+                    <div class="col-span-1 bg-gray-800 rounded-2xl p-6">
                         <h2 class="text-xl font-bold text-white mb-4">Food Freshness Status</h2>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Traffic Light -->
-                            <div class="flex justify-center md:justify-start">
-                                <div class="traffic-light bg-gray-900 rounded-2xl p-6">
-                                    <div id="redLight" class="w-20 h-20 bg-gray-700 rounded-full mb-3 flex items-center justify-center transition">
-                                        <i class="fas fa-times text-2xl text-gray-600"></i>
-                                    </div>
-                                    <div id="yellowLight" class="w-20 h-20 bg-gray-700 rounded-full mb-3 flex items-center justify-center transition">
-                                        <i class="fas fa-exclamation text-2xl text-gray-600"></i>
-                                    </div>
-                                    <div id="greenLight" class="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center transition">
-                                        <i class="fas fa-check text-2xl text-gray-600"></i>
-                                    </div>
+                        <div class="flex justify-center mt-8">
+                            <div class="traffic-light bg-gray-900 rounded-2xl p-8">
+                                <div id="redLight" class="w-24 h-24 bg-gray-700 rounded-full mb-4 flex items-center justify-center transition">
+                                    <i class="fas fa-times text-3xl text-gray-600"></i>
                                 </div>
-                            </div>
-                            
-                            <!-- Status Display -->
-                            <div>
-                                <div id="statusDisplay" class="p-4 bg-gray-900 rounded-xl h-full flex flex-col justify-center">
-                                    <h3 class="text-2xl font-bold" id="statusText">Status Unknown</h3>
-                                    <p class="text-gray-400 mt-2" id="statusMessage">Scanning food freshness...</p>
+                                <div id="yellowLight" class="w-24 h-24 bg-gray-700 rounded-full mb-4 flex items-center justify-center transition">
+                                    <i class="fas fa-exclamation text-3xl text-gray-600"></i>
+                                </div>
+                                <div id="greenLight" class="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center transition">
+                                    <i class="fas fa-check text-3xl text-gray-600"></i>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Sensor Form (now moved here) -->
-                        <form id="sensorForm" class="mt-6 grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="co2Input" class="block text-sm text-gray-300 mb-2">CO₂ Level (ppm)</label>
-                                <input type="range" min="0" max="3000" value="500" class="w-full" id="co2Input">
-                                <div class="flex justify-between text-xs text-gray-400 mt-1">
-                                    <span>0</span>
-                                    <span id="co2ValueInput">500</span>
-                                    <span>3000</span>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label for="nh3Input" class="block text-sm text-gray-300 mb-2">NH₃ Level (ppm)</label>
-                                <input type="range" min="0" max="50" value="8" class="w-full" id="nh3Input">
-                                <div class="flex justify-between text-xs text-gray-400 mt-1">
-                                    <span>0</span>
-                                    <span id="nh3ValueInput">8</span>
-                                    <span>50</span>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label for="h2sInput" class="block text-sm text-gray-300 mb-2">H₂S Level (ppm)</label>
-                                <input type="range" min="0" max="30" value="4" class="w-full" id="h2sInput">
-                                <div class="flex justify-between text-xs text-gray-400 mt-1">
-                                    <span>0</span>
-                                    <span id="h2sValueInput">4</span>
-                                    <span>30</span>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label for="vocsInput" class="block text-sm text-gray-300 mb-2">VOCs Level (ppb)</label>
-                                <input type="range" min="0" max="2000" value="300" class="w-full" id="vocsInput">
-                                <div class="flex justify-between text-xs text-gray-400 mt-1">
-                                    <span>0</span>
-                                    <span id="vocsValueInput">300</span>
-                                    <span>2000</span>
-                                </div>
-                            </div>
-                        </form>
-                        
-                        <!-- Food type and test button -->
-                        <div class="grid grid-cols-2 gap-4 mt-4">
-                            <div>
-                                <label for="foodType" class="block text-sm text-gray-300 mb-2">Food Type</label>
-                                <select id="foodType" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                    <option>Chicken</option>
-                                    <option>Beef</option>
-                                    <option>Fish</option>
-                                    <option>Dairy</option>
-                                    <option>Vegetables</option>
-                                    <option>Fruit</option>
-                                    <option>Cooked Meal</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-300 mb-2">Perform Test</label>
-                                <button id="runTestBtn" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                                    <i class="fas fa-flask mr-2"></i> Test Freshness
-                                </button>
-                            </div>
+                        <div id="statusDisplay" class="mt-8 text-center p-4 bg-gray-900 rounded-xl">
+                            <h3 class="text-2xl font-bold" id="statusText">Status Unknown</h3>
+                            <p class="text-gray-400 mt-2" id="statusMessage">Scanning food freshness...</p>
                         </div>
                     </div>
                     
-                    <!-- Sensor Data Display -->
-                    <div class="bg-gray-800 rounded-2xl p-6">
+                    <!-- Sensor Data -->
+                    <div class="col-span-1 lg:col-span-2 bg-gray-800 rounded-2xl p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-xl font-bold text-white">Sensor Data</h2>
                             <div class="flex items-center space-x-2">
@@ -450,6 +379,74 @@
                     </div>
                 </div>
                 
+                <!-- Manual Test Section -->
+                <div class="bg-gray-800 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Simulate Sensor Input</h2>
+                    <p class="text-gray-400 mb-6">Adjust sensor values to test different scenarios or manually input your food metrics</p>
+                    
+                    <form id="sensorForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div>
+                            <label for="co2Input" class="block text-sm text-gray-300 mb-2">CO₂ Level (ppm)</label>
+                            <input type="range" min="0" max="3000" value="500" class="w-full" id="co2Input">
+                            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                <span>0</span>
+                                <span id="co2ValueInput">500</span>
+                                <span>3000</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="nh3Input" class="block text-sm text-gray-300 mb-2">NH₃ Level (ppm)</label>
+                            <input type="range" min="0" max="50" value="8" class="w-full" id="nh3Input">
+                            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                <span>0</span>
+                                <span id="nh3ValueInput">8</span>
+                                <span>50</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="h2sInput" class="block text-sm text-gray-300 mb-2">H₂S Level (ppm)</label>
+                            <input type="range" min="0" max="30" value="4" class="w-full" id="h2sInput">
+                            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                <span>0</span>
+                                <span id="h2sValueInput">4</span>
+                                <span>30</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="vocsInput" class="block text-sm text-gray-300 mb-2">VOCs Level (ppb)</label>
+                            <input type="range" min="0" max="2000" value="300" class="w-full" id="vocsInput">
+                            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                <span>0</span>
+                                <span id="vocsValueInput">300</span>
+                                <span>2000</span>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="foodType" class="block text-sm text-gray-300 mb-2">Food Type</label>
+                            <select id="foodType" class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                <option>Chicken</option>
+                                <option>Beef</option>
+                                <option>Fish</option>
+                                <option>Dairy</option>
+                                <option>Vegetables</option>
+                                <option>Fruit</option>
+                                <option>Cooked Meal</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-300 mb-2">Perform Test</label>
+                            <button id="runTestBtn" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition">
+                                <i class="fas fa-flask mr-2"></i> Test Freshness
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Coming Soon Placeholder -->
