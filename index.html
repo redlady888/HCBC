@@ -13,16 +13,16 @@
                 extend: {
                     colors: {
                         primary: {
-                            50: '#f5f3ff',
-                            100: '#ede9fe',
-                            200: '#ddd6fe',
-                            300: '#c4b5fd',
-                            400: '#a78bfa',
-                            500: '#8b5cf6',
-                            600: '#7c3aed',
-                            700: '#6d28d9',
-                            800: '#5b21b6',
-                            900: '#4c1d95',
+                            50: '#fbf5ff',
+                            100: '#f5e5ff',
+                            200: '#edd0ff',
+                            300: '#e0b0ff',
+                            400: '#cc80ff',
+                            500: '#a54cff',
+                            600: '#8b3af5',
+                            700: '#7b28e8',
+                            800: '#6921c0',
+                            900: '#591d9e',
                         }
                     }
                 }
@@ -116,7 +116,7 @@
             <div class="flex-1 overflow-y-auto">
                 <h3 class="text-gray-400 text-sm font-semibold mb-3">MY PRODUCTS</h3>
                 <div id="productsContainer">
-                    <button data-product="container" class="w-full mb-2 py-3 px-4 bg-gradient-to-r from-[#a54cff] to-[#8133d8] hover:from-[#8133d8] hover:to-[#a54cff] text-white rounded-xl text-left font-bold transition product-btn">
+                    <button data-product="container" class="w-full mb-2 py-3 px-4 bg-gradient-to-r from-[#a54cff] to-[#a54cff] hover:from-[#a54cff] hover:to-[#a54cff] text-white rounded-xl text-left font-bold transition product-btn">
                         <i class="fas fa-box mr-2"></i> i-CONtainer
                     </button>
                     <button data-product="shelf" class="w-full mb-2 py-3 px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-xl text-left font-bold transition product-btn">
@@ -133,7 +133,7 @@
                     </button>
                 </div>
                 
-                <button id="addProductBtn" class="w-full py-3 px-4 bg-gradient-to-r from-[#a54cff]/70 to-[#8133d8]/70 hover:from-[#8133d8]/70 hover:to-[#a54cff]/70 border-2 border-dashed border-primary-500 rounded-xl text-center text-white mt-4 transition">
+                <button id="addProductBtn" class="w-full py-3 px-4 bg-gradient-to-r from-[#a54cff]/70 to-[#a54cff]/70 hover:from-[#a54cff]/70 hover:to-[#a54cff]/70 border-2 border-dashed border-primary-500 rounded-xl text-center text-white mt-4 transition">
                     <i class="fas fa-plus mr-2"></i> Add New Product
                 </button>
             </div>
@@ -168,9 +168,9 @@
                             <i class="fas fa-chevron-down ml-2 text-sm"></i>
                         </button>
                         <div class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-lg py-1 hidden group-hover:block z-10">
-                            <a href="#" data-plan="monthly" class="block px-4 py-2 text-white hover:bg-primary-700 transition plan-option">$1 / month</a>
-                            <a href="#" data-plan="yearly" class="block px-4 py-2 text-white hover:bg-primary-700 transition plan-option active">$200 / year</a>
-                            <a href="#" data-plan="3years" class="block px-4 py-2 text-white hover:bg-primary-700 transition plan-option">$500 / 3 years</a>
+                            <a href="#" data-plan="monthly" class="block px-4 py-2 text-white hover:bg-[#a54cff] transition plan-option">$1 / month</a>
+                            <a href="#" data-plan="yearly" class="block px-4 py-2 text-white hover:bg-[#a54cff] transition plan-option active">$200 / year</a>
+                            <a href="#" data-plan="3years" class="block px-4 py-2 text-white hover:bg-[#a54cff] transition plan-option">$500 / 3 years</a>
                         </div>
                     </div>
                     
@@ -329,7 +329,7 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm text-gray-300 mb-2">Perform Test</label>
-                                    <button id="runTestBtn" class="w-full bg-gradient-to-r from-[#a54cff] to-[#8133d8] hover:from-[#8133d8] hover:to-[#a54cff] text-white font-bold py-2 px-4 rounded-lg transition">
+                                    <button id="runTestBtn" class="w-full bg-gradient-to-r from-[#a54cff] to-[#a54cff] hover:from-[#a54cff] hover:to-[#a54cff] text-white font-bold py-2 px-4 rounded-lg transition">
                                         <i class="fas fa-flask mr-2"></i> Test Freshness
                                     </button>
                                 </div>
@@ -556,7 +556,7 @@
             
             <div class="mt-8 flex justify-end space-x-3">
                 <button id="cancelAddBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">Cancel</button>
-                <button id="confirmAddBtn" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition">Add Product</button>
+                <button id="confirmAddBtn" class="px-4 py-2 bg-[#a54cff] hover:bg-[#8b3af5] text-white rounded-lg transition">Add Product</button>
             </div>
         </div>
     </div>
@@ -896,23 +896,51 @@
         // Initialize chart
         function initChart() {
             const ctx = document.getElementById('historyChart').getContext('2d');
+            
+            // Create gradient for the line
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, '#4ade80'); // Green for fresh
+            gradient.addColorStop(0.5, '#f59e0b'); // Orange for warning
+            gradient.addColorStop(1, '#ef4444'); // Red for spoiled
+            
+            const data = [98, 89, 82, 75, 68, 45, 30];
+            
+            // Determine segment colors based on value ranges
+            const segmentColors = data.map(value => {
+                if (value > 70) return '#4ade80'; // Green for fresh
+                if (value > 40) return '#f59e0b'; // Orange for warning
+                return '#ef4444'; // Red for spoiled
+            });
+            
             const chart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
                     datasets: [{
                         label: 'Freshness Score',
-                        data: [98, 89, 82, 75, 68, 45, 30],
-                        borderColor: '#4ade80',
-                        backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                        data: data,
+                        segment: {
+                            borderColor: (ctx) => {
+                                const value = ctx.p1.parsed.y;
+                                if (value > 70) return '#4ade80'; // Green for fresh
+                                if (value > 40) return '#f59e0b'; // Orange for warning
+                                return '#ef4444'; // Red for spoiled
+                            }
+                        },
+                        backgroundColor: 'rgba(30, 41, 59, 0.3)',
+                        borderWidth: 2,
                         tension: 0.3,
                         fill: true,
+                        pointBackgroundColor: segmentColors,
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 5,
+                        pointHoverBorderWidth: 2
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
+                    pluginsa: {
                         legend: {
                             display: false
                         }
