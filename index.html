@@ -88,8 +88,8 @@
 <div class="w-full lg:w-64 bg-gray-800 p-4 lg:p-6 flex flex-col">
     <!-- Logo -->
     <div class="mb-8 flex items-center justify-center">
-        <!-- Logo image directly, no purple box -->
-        <img src="de8ff003-630f-4193-b36e-5ace02f85b89.png" alt="i-CONTAINER Logo" class="w-8 h-10 mr-3" />
+        <!-- Logo -->
+        <img src="i-container-logo.svg" alt="i-CONTAINER Logo" class="w-8 h-10 mr-3" />
         
         <!-- Brand name with "tainer" in purple -->
         <h1 class="text-white text-xl font-bold">
@@ -136,10 +136,6 @@
                 <button id="addProductBtn" class="w-full py-3 px-4 bg-gradient-to-r from-[#a54cff]/70 to-[#a54cff]/70 hover:from-[#a54cff]/70 hover:to-[#a54cff]/70 border-2 border-dashed border-primary-500 rounded-xl text-center text-white mt-4 transition">
                     <i class="fas fa-plus mr-2"></i> Add New Product
                 </button>
-
-                <button id="tutorialBtn" class="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl text-center mt-4 transition">
-                    <i class="fas fa-graduation-cap mr-2"></i> View Tutorials
-                </button>
             </div>
             
             <!-- Footer -->
@@ -182,6 +178,12 @@
                     <button class="p-2 bg-gray-800 hover:bg-gray-700 rounded-full text-gray-300 transition">
                         <i class="fas fa-bell"></i>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    
+                    <!-- Purchase Container -->
+                    <button id="purchaseBtn" class="px-4 py-2 bg-[#a54cff] hover:bg-[#8b3af5] text-white rounded-lg flex items-center transition">
+                        <i class="fas fa-shopping-cart mr-2"></i>
+                        Shop
                     </button>
                 </div>
             </div>
@@ -342,44 +344,6 @@
                     </div>
                 </div>
                 
-                <!-- Tutorial Video Upload -->
-                <div id="tutorialSection" class="bg-gray-800 rounded-2xl p-6 mb-8 hidden">
-                    <h2 class="text-xl font-bold text-white mb-6">Tutorial Video</h2>
-                    
-                    <div class="bg-gray-900 rounded-xl border-2 border-dashed border-gray-700 p-8 text-center">
-                        <div class="max-w-md mx-auto">
-                            <div class="bg-gray-800 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-video text-2xl text-blue-400"></i>
-                            </div>
-                            <h3 class="text-lg font-medium text-white mb-2">Upload Tutorial Video</h3>
-                            <p class="text-gray-400 mb-6">Select a video file to upload or drag and drop here</p>
-                            
-                            <input type="file" id="videoUpload" accept="video/*" class="hidden">
-                            <label for="videoUpload" class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer transition">
-                                <i class="fas fa-cloud-upload-alt mr-2"></i> Choose File
-                            </label>
-                            
-                            <p class="text-xs text-gray-500 mt-4">MP4, MOV or AVI. Max 200MB</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Video Preview Section -->
-                    <div id="videoPreview" class="hidden mt-6">
-                        <video id="uploadedVideo" controls class="w-full rounded-lg" poster="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="flex justify-between items-center mt-4">
-                            <div>
-                                <h3 id="videoTitle" class="font-medium text-white">Tutorial Video</h3>
-                                <p id="videoInfo" class="text-xs text-gray-400">1280x720 | 2.4MB</p>
-                            </div>
-                            <button id="deleteVideoBtn" class="text-red-500 hover:text-red-400">
-                                <i class="fas fa-trash mr-1"></i> Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Product Details -->
 =======
                 <div class="bg-gray-800 rounded-2xl p-6 mb-8">
@@ -599,6 +563,95 @@
             <div class="mt-8 flex justify-end space-x-3">
                 <button id="cancelAddBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">Cancel</button>
                 <button id="confirmAddBtn" class="px-4 py-2 bg-[#a54cff] hover:bg-[#8b3af5] text-white rounded-lg transition">Add Product</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Purchase Modal -->
+    <div id="purchaseModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-2xl p-6 w-full max-w-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-white">Get i-CONtainer</h3>
+                <button id="closePurchaseModal" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- First-time Purchase -->
+            <div class="bg-gray-900 rounded-xl p-6 mb-6 border-2 border-primary-600">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <h4 class="font-bold text-lg text-white mb-2">Starter Bundle</h4>
+                        <p class="text-gray-400 mb-4">Best value - includes first-year subscription + free i-CONtainer</p>
+                        <ul class="text-sm text-gray-300 space-y-2">
+                            <li class="flex items-center"><i class="fas fa-check text-primary-500 mr-2"></i> Full app access</li>
+                            <li class="flex items-center"><i class="fas fa-check text-primary-500 mr-2"></i> Free i-CONtainer included</li>
+                            <li class="flex items-center"><i class="fas fa-check text-primary-500 mr-2"></i> 1 year premium subscription</li>
+                        </ul>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-3xl font-bold text-white">$30</p>
+                        <p class="text-xs text-gray-400">one-time payment</p>
+                    </div>
+                </div>
+                
+                <form id="firstTimePurchase" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-1">Email</label>
+                        <input type="email" required class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-1">Shipping Address</label>
+                        <input type="text" required class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg py-2 px-3">
+                    </div>
+                    <div class="md:col-span-2">
+                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-500 text-white font-bold rounded-lg transition">
+                            Complete Purchase
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Individual Options -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Subscription Only -->
+                <div class="bg-gray-900 rounded-xl p-4 border border-gray-700">
+                    <h4 class="font-bold text-white mb-2">Subscription Only</h4>
+                    <p class="text-xs text-gray-400 mb-3">For existing i-CONtainer owners</p>
+                    <div class="text-center mb-4">
+                        <p class="text-xl font-bold text-white">$1.99<span class="text-sm font-normal text-gray-400">/month</span></p>
+                        <p class="text-sm text-primary-400">or $20/year</p>
+                    </div>
+                    <button class="w-full py-2 bg-primary-700 hover:bg-primary-600 text-white rounded-lg text-sm transition">
+                        Subscribe
+                    </button>
+                </div>
+                
+                <!-- Small Container -->
+                <div class="bg-gray-900 rounded-xl p-4 border border-gray-700">
+                    <h4 class="font-bold text-white mb-2">Compact i-CONtainer</h4>
+                    <p class="text-xs text-gray-400 mb-3">5L capacity (30×20×15cm)</p>
+                    <div class="text-center mb-4">
+                        <p class="text-xl font-bold text-white">$20</p>
+                        <p class="text-sm text-gray-400">one-time</p>
+                    </div>
+                    <button class="w-full py-2 bg-primary-700 hover:bg-primary-600 text-white rounded-lg text-sm transition">
+                        Add to Cart
+                    </button>
+                </div>
+                
+                <!-- Large Container -->
+                <div class="bg-gray-900 rounded-xl p-4 border border-gray-700">
+                    <h4 class="font-bold text-white mb-2">Family i-CONtainer</h4>
+                    <p class="text-xs text-gray-400 mb-3">10L capacity (40×25×20cm)</p>
+                    <div class="text-center mb-4">
+                        <p class="text-xl font-bold text-white">$25</p>
+                        <p class="text-sm text-gray-400">one-time</p>
+                    </div>
+                    <button class="w-full py-2 bg-primary-700 hover:bg-primary-600 text-white rounded-lg text-sm transition">
+                        Add to Cart
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1011,42 +1064,24 @@
             });
         }
 
-        // Tutorial button and video handling
-        const tutorialBtn = document.getElementById('tutorialBtn');
-        const tutorialSection = document.getElementById('tutorialSection');
-        const videoUpload = document.getElementById('videoUpload');
-        const videoPreview = document.getElementById('videoPreview');
-        const uploadedVideo = document.getElementById('uploadedVideo');
-        const deleteVideoBtn = document.getElementById('deleteVideoBtn');
-        const videoTitle = document.getElementById('videoTitle');
-        const videoInfo = document.getElementById('videoInfo');
-
-        // Toggle tutorial section
-        tutorialBtn.addEventListener('click', () => {
-            tutorialSection.classList.toggle('hidden');
+        // Purchase modal handlers
+        const purchaseBtn = document.getElementById('purchaseBtn');
+        const purchaseModal = document.getElementById('purchaseModal');
+        const closePurchaseModal = document.getElementById('closePurchaseModal');
+        
+        purchaseBtn.addEventListener('click', () => {
+            purchaseModal.classList.remove('hidden');
         });
-
-        // Handle video upload
-        videoUpload.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const videoURL = URL.createObjectURL(file);
-                uploadedVideo.src = videoURL;
-                
-                // Set video info
-                videoTitle.textContent = file.name;
-                videoInfo.textContent = `${Math.round(file.size / (1024 * 1024) * 100) / 100}MB`;
-                
-                // Show preview
-                videoPreview.classList.remove('hidden');
-            }
+        
+        closePurchaseModal.addEventListener('click', () => {
+            purchaseModal.classList.add('hidden');
         });
-
-        // Handle video deletion
-        deleteVideoBtn.addEventListener('click', function() {
-            uploadedVideo.src = '';
-            videoUpload.value = '';
-            videoPreview.classList.add('hidden');
+        
+        // First purchase handler
+        document.getElementById('firstTimePurchase').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you for your purchase! Your i-CONtainer will be shipped soon.');
+            purchaseModal.classList.add('hidden');
         });
 
         // Initialize application
